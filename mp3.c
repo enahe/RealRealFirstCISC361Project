@@ -50,12 +50,25 @@ void printForward(struct mp3Node * headReference) {
         headReference = headReference->next;
     }
 }
-    
 
+void printBackwards(struct mp3Node * headReference) {
+    struct mp3Node* lastMp3;
+    printf("Take it back now ya'll \n");
+    while (headReference != NULL) {
+        lastMp3 = headReference;
+        headReference = headReference->next;
+    }
+    while (lastMp3 != NULL) {
+         printf(" Artist Name: %s, Song Name: %s, Date Of Release: %s, Running Time: %d \n ", lastMp3->artistName, lastMp3->songTitle, lastMp3->songDate, lastMp3->runTime);
+         lastMp3 = lastMp3->prev;
+    }    
+}
 
 int main(int argc, char** argv) {
      struct mp3Node* headNode = NULL;
      addMp3("test", "testTitle","testDate", 12, &headNode);
+     addMp3("test2", "testTitle2","testDate2", 14, &headNode);
      printForward(headNode);
+     printBackwards(headNode);
 }
 

@@ -43,6 +43,35 @@ void addMp3 (char * newArtistName, char * newSongTitle, char * newSongDate, int 
     }
 }
 
+void deleteMp3(char * removeArtistName, struct mp3Node ** headReference) {
+ printf("Deletion \n");
+
+struct mp3Node * nextMp3;
+struct mp3Node * currentMp3Node  = *headReference;
+while (currentMp3Node != NULL)  {
+    if (strcmp(removeArtistName, currentMp3Node->artistName) == 0) {
+        printf("equal");
+        nextMp3 = currentMp3Node -> next;
+        
+        if (*headReference == currentMp3Node) {
+            printf("setting");
+            *headReference = currentMp3Node ->next;
+        }
+        if(currentMp3Node -> next != NULL) {
+            currentMp3Node ->next->prev = currentMp3Node -> prev;
+        }
+        if (currentMp3Node -> prev != NULL) {
+            currentMp3Node -> prev-> next = currentMp3Node -> next;
+        }
+        free(currentMp3Node);
+        currentMp3Node = nextMp3;
+    }
+    else {
+        currentMp3Node = currentMp3Node -> next;
+    }
+}
+}
+
 void printForward(struct mp3Node * headReference) {
     printf("Starting from the top \n");
     while (headReference != NULL) {
@@ -68,6 +97,8 @@ int main(int argc, char** argv) {
      struct mp3Node* headNode = NULL;
      addMp3("test", "testTitle","testDate", 12, &headNode);
      addMp3("test2", "testTitle2","testDate2", 14, &headNode);
+     addMp3("test", "testTitle","testDate", 12, &headNode);
+     deleteMp3("test2", &headNode);
      printForward(headNode);
      printBackwards(headNode);
 }

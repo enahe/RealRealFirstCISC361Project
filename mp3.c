@@ -13,12 +13,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "mp3header.h"
 
 #define BUFFERSIZE 128
 
 void addMp3 (char * newArtistName, char * newSongTitle, char * newSongDate, int newRunTime, mp3Node** headReference) {
-    printf("Adding New Mp3 Node \n");
+    printf("Adding New MP3 Node \n");
     struct mp3Node* newMp3 = (struct mp3Node*) malloc(sizeof( struct mp3Node));
     
     struct mp3Node* lastMp3 = *headReference;
@@ -43,13 +44,13 @@ void addMp3 (char * newArtistName, char * newSongTitle, char * newSongDate, int 
         }
         lastMp3->next = newMp3;
         newMp3-> prev = lastMp3;
-        printf("Mp3 Added! \n");
+        printf("MP3 Added! \n");
         return;
     }
 }
 
 void deleteMp3(char * removeArtistName, struct mp3Node ** headReference) {
- printf("Deletion \n");
+ printf("Deleting MP3\n");
 
 struct mp3Node * nextMp3;
 struct mp3Node * currentMp3Node  = *headReference;
@@ -68,6 +69,9 @@ while (currentMp3Node != NULL)  {
         if (currentMp3Node -> prev != NULL) {
             currentMp3Node -> prev-> next = currentMp3Node -> next;
         }
+        free(currentMp3Node->artistName);
+        free(currentMp3Node->songTitle);
+        free(currentMp3Node->songDate);
         free(currentMp3Node);
         currentMp3Node = nextMp3;
     }
@@ -78,7 +82,7 @@ while (currentMp3Node != NULL)  {
 }
 
 void printForward(struct mp3Node * headReference) {
-    printf("Starting from the top \n");
+    printf("Printing Forward\n");
     while (headReference != NULL) {
         printf(" Artist Name: %s, Song Name: %s, Date Of Release: %s, Running Time: %d \n ", headReference->artistName, headReference->songTitle, headReference->songDate, headReference->runTime);
         headReference = headReference->next;
@@ -86,8 +90,8 @@ void printForward(struct mp3Node * headReference) {
 }
 
 void printBackwards(struct mp3Node * headReference) {
-    struct mp3Node* lastMp3;
-    printf("Take it back now ya'll \n");
+    struct mp3Node* lastMp3 = headReference;
+    printf("Printing Backwards\n");
     while (headReference != NULL) {
         lastMp3 = headReference;
         headReference = headReference->next;

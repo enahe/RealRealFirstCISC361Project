@@ -1,14 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /* 
- * File:   main.c
- * Author: Tommy
+ * File:   mp3.c
+ * Author: Eric Nahe
  *
  * Created on September 2, 2018, 12:58 PM
+ * Updated on September 6, 2018, 3:06 PM
+ * 
+ * This program allows a user to add, delete, and print entries in a doubly linked 
+ * list of MP3's. 
  */
 
 #include <stdio.h>
@@ -20,25 +19,35 @@
 
 void addMp3 (char * newArtistName, char * newSongTitle, char * newSongDate, int newRunTime, mp3Node** headReference) {
     printf("Adding New MP3 Node \n");
+    ///allocate memory for our new Mp3Node
     struct mp3Node* newMp3 = (struct mp3Node*) malloc(sizeof( struct mp3Node));
     
     struct mp3Node* lastMp3 = *headReference;
+    //allocate space in memory for the 3 char *'s 
     newMp3->artistName = malloc(strlen(newArtistName)+1);
     newMp3->songTitle = malloc(strlen(newSongTitle)+1);
     newMp3->songDate = malloc(strlen(newSongDate)+1);
+    //copy the strings into their assigned locations 
     strcpy(newMp3->artistName, newArtistName);
     strcpy(newMp3->songTitle, newSongTitle);
     strcpy(newMp3->songDate, newSongDate);
+    //assign the int for run time directly into its location,
+    //since its an int we don't need to worry about malocing it. 
     newMp3->runTime = newRunTime;
     
+    //since this is added at the end of the list, we can assign its next node 
+    //to null. 
     newMp3->next = NULL;
     
+    //check to see if this is the first node in the list
     if (*headReference == NULL) {
         newMp3->prev = NULL;
         *headReference = newMp3;
         return;
     }
     else {
+        //now traverse the list until you reach the end, and make the last node the
+        //prev of our newly added node
         while (lastMp3->next != NULL) {
             lastMp3 = lastMp3->next;
         }
@@ -51,11 +60,77 @@ void addMp3 (char * newArtistName, char * newSongTitle, char * newSongDate, int 
 
 void deleteMp3(char * removeArtistName, struct mp3Node ** headReference) {
  printf("Deleting MP3\n");
+//initialize 2 nodes
+struct mp3Node * nextMp3;
+struct mp3Node * currentMp3Node  = *headReference;
+
+//start traversing the list
+while (currentMp3Node != NULL)  {
+    //if the artistName of the current node matches the remove artist node, then remove it from the list
+    if (strcmp(removeArtistName, currentMp3Node->artistName) == 0) {
+        printf("equal");
+        nextMp3 = currentMp3Node -> next;
+        //if the headReference is the current node, advance it so you can still traverse the list
+        if (*headReference == currentMp3Node) {
+            printf("setting");
+            
+            *headReference = currentMp3Node ->next;
+        }
+        //assign the current Mp3's next node to the next node in the list
+        if(currentMp3Node -> next != NULL) {
+            currentMp3Node ->next->prev = currentMp3Node -> prev;
+        }
+        //assign the current Mp3's previous node to the next node in the lsit
+        if (currentMp3Node -> prev != NULL) {
+            currentMp3Node -> prev-> next = currentMp3Node -> next;
+        }
+        
+        //free all of the data for the structs we initialized for the node, and free the node itself. 
+        free(currentMp3Node->artistName);
+        free(currentMp3Node->songTitle);
+        free(currentMp3Node->songDate);
+        free(currentMp3Node);
+        //make the current node the next one
+        currentMp3Node = nextMp3;
+    }
+    else {
+        currentMp3Node = currentMp3Node -> next;
+    }
+}
+}
+
+void printForward(struct mp3Node * headReference) {
+    printf("Printing Forward\n");
+    //traverse the list, front to back, printing along the way
+    while (headReference != NULL) {
+        printf(" Artist Name: %s, Song Name: %s, Date Of Release: %s, Running Time: %d \n ", headReference->artistName, headReference->songTitle, headReference->songDate, headReference->runTime);
+        headReference = headReference->next;
+    }
+}
+
+void printBackwards(struct mp3Node * headReference) {
+    struct mp3Node* lastMp3 = headReference;
+    printf("Printing Backwards\n");
+    //first traverse the list forwards
+    while (headReference != NULL) {
+        lastMp3 = headReference;
+        headReference = headReference->next;
+    }
+    //then go backwards and print
+    while (lastMp3 != NULL) {
+         printf(" Artist Name: %s, Song Name: %s, Date Of Release: %s, Running Time: %d \n ", lastMp3->artistName, lastMp3->songTitle, lastMp3->songDate, lastMp3->runTime);
+         lastMp3 = lastMp3->prev;
+    }    
+}
+
+void deleteAll(struct mp3Node ** headReference) {
+    printf("Deleting All MP3's\n");
 
 struct mp3Node * nextMp3;
 struct mp3Node * currentMp3Node  = *headReference;
+
+//go through and delete all the remaining nodes in the list.
 while (currentMp3Node != NULL)  {
-    if (strcmp(removeArtistName, currentMp3Node->artistName) == 0) {
         printf("equal");
         nextMp3 = currentMp3Node -> next;
         
@@ -74,35 +149,11 @@ while (currentMp3Node != NULL)  {
         free(currentMp3Node->songDate);
         free(currentMp3Node);
         currentMp3Node = nextMp3;
-    }
-    else {
-        currentMp3Node = currentMp3Node -> next;
-    }
 }
-}
-
-void printForward(struct mp3Node * headReference) {
-    printf("Printing Forward\n");
-    while (headReference != NULL) {
-        printf(" Artist Name: %s, Song Name: %s, Date Of Release: %s, Running Time: %d \n ", headReference->artistName, headReference->songTitle, headReference->songDate, headReference->runTime);
-        headReference = headReference->next;
-    }
-}
-
-void printBackwards(struct mp3Node * headReference) {
-    struct mp3Node* lastMp3 = headReference;
-    printf("Printing Backwards\n");
-    while (headReference != NULL) {
-        lastMp3 = headReference;
-        headReference = headReference->next;
-    }
-    while (lastMp3 != NULL) {
-         printf(" Artist Name: %s, Song Name: %s, Date Of Release: %s, Running Time: %d \n ", lastMp3->artistName, lastMp3->songTitle, lastMp3->songDate, lastMp3->runTime);
-         lastMp3 = lastMp3->prev;
-    }    
 }
 
 int main(int argc, char** argv) {
+  //initializing initial node and the strings for the buffer and inputs provided by the user
   struct mp3Node* headNode = NULL;
   char  buffer[BUFFERSIZE];
   char  artistNameInput[BUFFERSIZE];
@@ -114,7 +165,7 @@ int main(int argc, char** argv) {
 
   printf("Welcome to MP3 Doubly Linked List! \n ");
   printf("Please press 1 to add a new Mp3 to your list, 2 to delete an Mp3 from your list, 3 to print the list forwards, and 4 to print the list backwards \n");
-   printf("Press ctrl or command c to exit program. \n");
+  printf("Press 5 to exit program.\n");
   while(fgets(buffer, BUFFERSIZE , stdin) != NULL) {
       buffer[strlen(buffer)-1] = '\0';
       
@@ -144,7 +195,7 @@ int main(int argc, char** argv) {
           addMp3(artistNameInput, songTitleInput, songReleaseDate, songLength, &headNode);
            printf("Welcome to MP3 Doubly Linked List! \n ");
            printf("Please press 1 to add a new Mp3 to your list, 2 to delete an Mp3 from your list, 3 to print the list forwards, and 4 to print the list backwards \n");
-           printf("Press ctrl or command c to exit program. \n");
+           printf("Press 5 to exit program.\n");
       }
       else if (!strcmp(buffer, "2")) {
           printf("Please enter the name of the artist you wish to delete. \n");
@@ -154,43 +205,24 @@ int main(int argc, char** argv) {
           deleteMp3(artistNameInput, &headNode);
           printf("Welcome to MP3 Doubly Linked List! \n ");
           printf("Please press 1 to add a new Mp3 to your list, 2 to delete an Mp3 from your list, 3 to print the list forwards, and 4 to print the list backwards \n");
-          printf("Press ctrl or command c to exit program. \n");
+          printf("Press 5 to exit program.\n");
       }
       else if (!strcmp(buffer, "3")) {
           printForward(headNode);
           printf("Welcome to MP3 Doubly Linked List! \n ");
           printf("Please press 1 to add a new Mp3 to your list, 2 to delete an Mp3 from your list, 3 to print the list forwards, and 4 to print the list backwards \n");
-          printf("Press ctrl or command c to exit program. \n");
+          printf("Press 5 to exit program.\n");
       }
       else if (!strcmp(buffer, "4")) {
           printBackwards(headNode);
           printf("Welcome to MP3 Doubly Linked List! \n ");
           printf("Please press 1 to add a new Mp3 to your list, 2 to delete an Mp3 from your list, 3 to print the list forwards, and 4 to print the list backwards \n");
-          printf("Press ctrl or command c to exit program. \n");
+          printf("Press 5 to exit program.\n");
+      }
+      else if (!strcmp(buffer, "5")) {
+          deleteAll(&headNode);
+          exit(0);
       }
   }
-  /*{
-    len = (int) strlen(buffer);
-    printf("length [%d] of string %s", len, buffer); // notice length!
-    buffer[len - 1] = '\0';                 // why minus 1 ???
-    mp3 = (mp3_t *) malloc(sizeof(mp3_t));
-    mp3->name = (char *) malloc(len);
-    strcpy(mp3->name, buffer);
-    printf("Name is [%s]...\n", mp3->name);
-  }
-  free(mp3->name);   // line free 1
-  free(mp3);         // line free 2
-  return 0;
-}
-   */ 
-    /*
-     struct mp3Node* headNode = NULL;
-     addMp3("test", "testTitle","testDate", 12, &headNode);
-     addMp3("test2", "testTitle2","testDate2", 14, &headNode);
-     addMp3("test", "testTitle","testDate", 12, &headNode);
-     deleteMp3("test2", &headNode);
-     printForward(headNode);
-     printBackwards(headNode);
-     * */
 }
 

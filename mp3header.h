@@ -26,10 +26,9 @@ extern "C" {
 #endif
 //
 /*
- mp3Node: a doubly linked list node containing an artistName in char,
- * a song title in char, a song date in char perferably in mm-dd-yy format,
- * and the runtime of the song.
- * 
+ mp3Node: a doubly linked list node containing an artistName in string,
+ * a song title in string, a song date in sting, and the runtime of the song as an int. It also has pointers to the next and previous songs 
+ * in the MP3 list. 
  */
 typedef struct mp3Node {
     char * artistName;
@@ -39,22 +38,31 @@ typedef struct mp3Node {
     struct mp3Node * next;
     struct mp3Node * prev; 
 } mp3Node;
-/* addMp3: Adds a new mp3 node to the back of the list.
+
+/* addMp3: Takes in 3 strings from the user (newArtistName, newSongTitle, newSongDate) and an int from the user (newRunTime), along with the address of
+ * the head node in the doubly linked list and adds a new mp3 node to the back of the list.
  */
 void addMp3 (char * newArtistName, char * newSongTitle, char * newSongDate, int newRunTime, struct mp3Node** headReference);
 
-/* deleteMp3: Deletes all entries from a specific artist from the linked list.
+/* deleteMp3: Takes in a string from the user (removeArtistName) and the address of the head node of the doubly linked list
+ * and deletes all mp3's from the list that have that artists name attached to it.
  */
 void deleteMp3 (char * removeArtistName, struct mp3Node** headReference);
 
-/*  printForward: does a forward traversal of the list 
+/*  printForward: Takes in the address of the head node in the doubly linked list and prints out the data in each node of the linked list 
+ *  from the first entry to the last one.
  */
 
 void printForward (struct mp3Node* headReference);
 
-/* printBackwards: does a reverse transversal of the list
+/*  printBackward: Takes in the address of the head node in the doubly linked list and prints out the data in each node of the linked list 
+ *  from the last entry to the first one.
  */
 
 void printBackward (struct mp3Node* headReference);
+
+/* deleteAll: Takes in the address of the head node of the linked list and deletes all of its nodes before exiting program.
+ */
+void deleteAll(struct mp3Node** headReference);
 #endif /* MP3HEADER_H */
 
